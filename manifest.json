@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "What's my IP",
+  "version": "1.0",
+  "description": "Finds out your IP address with Country.",
+  "icons": {
+    "50": "icons/icon-50.png",
+    "100": "icons/icon-100.png"
+  },
+  "author": "Jozue KUPEC | LifeCode",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "What's my IP"
+  }
+}
