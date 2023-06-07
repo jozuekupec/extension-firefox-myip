@@ -4,6 +4,8 @@ class MyIpApiClient {
         this._ipGeolocationApiEndPoint = 'http://ip-api.com/json/';
         this._flagApiEndPoint = 'https://flagsapi.com/';
 
+        this.flashMessagesContainer = document.querySelector('[data-flash-messages]');
+
         this.ipElement = document.querySelector('[data-ip]');
         this.countryElement = document.querySelector('[data-country]');
         this.flagElement = document.querySelector('[data-flag]');
@@ -20,16 +22,19 @@ class MyIpApiClient {
     async reload() {
         let ipResponse = await fetch(this._myIpApiEndPoint);
         if (!ipResponse.ok) {
-            alert("Nepodařilo se připojit k serveru!");
+            this.flashMessagesContainer.appendChild(this.buildMessage("danger", "ERROR", "Nepodařilo se připojit k serveru!"));
             return;
         }
 
         let ipData = await ipResponse.json();
         this.ip = ipData.ip;
+        this.updatePanel();
 
         let geoInfoResponse = await fetch(this._ipGeolocationApiEndPoint + this.ip);
         if (!geoInfoResponse.ok) {
-            alert("Nepodařilo se připojit k serveru!");
+            this.flashMessagesContainer.appendChild(this.buildMessage("danger", "ERROR", "Nepodařilo se připojit k serveru!"));
+            this.countryElement.style.display = "none";
+            this.flagElement.style.display = "none";
             return;
         }
 
@@ -60,6 +65,35 @@ class MyIpApiClient {
      */
     getFlagImageSource(cc) {
         return this._flagApiEndPoint + cc + '/flat/64.png'
+    }
+
+    /**
+     * Sestaví a navrátí element zprávy flash message.
+     *
+     * @param {string} messageType
+     * @param {string} messageTitle
+     * @param {string} messageText
+     * @return HTMLDivElement
+     */
+    buildMessage(messageType, messageTitle, messageText = "") {
+        let messageContainerElement = document.createElement('div');
+        let messageTitleElement = document.createElement('h5');
+        let messageTextElement = document.createElement('p');
+
+        messageContainerElement.classList.add('alert');
+        messageContainerElement.classList.add('alert-' + messageType);
+        messageTitleElement.classList.add('m-0')
+        messageTextElement.classList.add('m-0')
+
+        messageContainerElement.setAttribute('role', 'alert');
+
+        messageTitleElement.innerText = messageTitle;
+        messageTextElement.innerText = messageText;
+
+        messageContainerElement.appendChild(messageTitleElement);
+        messageText && messageContainerElement.appendChild(messageTextElement);
+
+        return messageContainerElement;
     }
 
 }
